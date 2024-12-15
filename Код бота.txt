@@ -4,16 +4,19 @@ from telebot import types
 
 bot = telebot.TeleBot('7602719591:AAER_dkEQXD9x0O4RNnya5nzWss3RAnPqGE')
 
+
 def send_messages_with_delay(chat_id, file, delay=5, lines=15):
     for _ in range(lines):
         bot.send_message(chat_id, file.readline().strip(), reply_markup=types.ReplyKeyboardRemove())
         time.sleep(delay)
+
 
 def create_keyboard(*buttons):
     markup = types.ReplyKeyboardMarkup()
     for button in buttons:
         markup.row(types.KeyboardButton(button))
     return markup
+
 
 @bot.message_handler(commands=['start'])
 def main_1(message):
@@ -22,6 +25,7 @@ def main_1(message):
                      f'Ну что, {message.from_user.first_name} {message.from_user.last_name}, ты готов(a) к приключениям?',
                      reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
+
 
 def on_click(message):
     if message.text == 'Да, конечно':
@@ -32,6 +36,7 @@ def on_click(message):
     elif message.text == 'Не, я не хочу':
         bot.send_message(message.chat.id, 'Ты потерял счастье, отрок', reply_markup=types.ReplyKeyboardRemove())
 
+
 def main_2(message):
     markup = create_keyboard(
         'Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.',
@@ -40,6 +45,7 @@ def main_2(message):
     )
     bot.send_message(message.chat.id, '— Выбор:', reply_markup=markup)
     bot.register_next_step_handler(message, on_click_1)
+
 
 def on_click_1(message):
     if message.text.startswith('Присоединиться к Ордену'):
@@ -62,29 +68,36 @@ def on_click_1(message):
             send_messages_with_delay(message.chat.id, file)
         main_2_3(message)
 
+
 def main_2_1(message):
     markup = create_keyboard('Развилка 1_1', 'Развилка 1_2', 'Развилка 1_3')
     bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
     bot.register_next_step_handler(message, on_click_2)
 
+
 def on_click_2(message):
     handle_fork(message, '1', main_2)
+
 
 def main_2_2(message):
     markup = create_keyboard('Развилка 2_1', 'Развилка 2_2', 'Развилка 2_3')
     bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
     bot.register_next_step_handler(message, on_click_3)
 
+
 def on_click_3(message):
     handle_fork(message, '2', main_2)
+
 
 def main_2_3(message):
     markup = create_keyboard('Развилка 3_1', 'Развилка 3_2', 'Развилка 3_3')
     bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
     bot.register_next_step_handler(message, on_click_4)
 
+
 def on_click_4(message):
     handle_fork(message, '3', main_2)
+
 
 def handle_fork(message, fork_number, next_step_handler):
     fork_files = {
@@ -106,5 +119,6 @@ def handle_fork(message, fork_number, next_step_handler):
         return
 
     next_step_handler(message)
+
 
 bot.infinity_polling()
