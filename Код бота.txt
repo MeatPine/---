@@ -1,80 +1,110 @@
-from heapq import merge
-from xml.sax import parse
-
 import telebot
 import time
 from telebot import types
 
 bot = telebot.TeleBot('7602719591:AAER_dkEQXD9x0O4RNnya5nzWss3RAnPqGE')
-file = open("C:/Users/Артём/Desktop/Проект/Sujetforgame.txt", encoding='utf-8')
+
+def send_messages_with_delay(chat_id, file, delay=5, lines=15):
+    for _ in range(lines):
+        bot.send_message(chat_id, file.readline().strip(), reply_markup=types.ReplyKeyboardRemove())
+        time.sleep(delay)
+
+def create_keyboard(*buttons):
+    markup = types.ReplyKeyboardMarkup()
+    for button in buttons:
+        markup.row(types.KeyboardButton(button))
+    return markup
 
 @bot.message_handler(commands=['start'])
 def main_1(message):
-    markup = types.ReplyKeyboardMarkup()
-    btn1 = types.KeyboardButton('Да, конечно')
-    markup.row(btn1)
-    btn2 = types.KeyboardButton('Не, я не хочу')
-    markup.row(btn2)
-    bot.send_message(message.chat.id, f'Ну что, {message.from_user.first_name} {message.from_user.last_name}, ты готов(a) к приключениям?', reply_markup=markup)
+    markup = create_keyboard('Да, конечно', 'Не, я не хочу')
+    bot.send_message(message.chat.id,
+                     f'Ну что, {message.from_user.first_name} {message.from_user.last_name}, ты готов(a) к приключениям?',
+                     reply_markup=markup)
     bot.register_next_step_handler(message, on_click)
-
-def main_2(message):
-    markup = types.ReplyKeyboardMarkup()
-    btn1 = types.KeyboardButton('Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.')
-    markup.row(btn1)
-    btn2 = types.KeyboardButton('Сотрудничать с осторожностью: Кай соглашается временно сотрудничать, но сохраняет подозрительность.')
-    markup.row(btn2)
-    btn3 = types.KeyboardButton('Отказаться: Кай решает покинуть Орден, считая их планы опасными для свободы людей.')
-    markup.row(btn3)
-    bot.send_message(message.chat.id, f'— Выбор:', reply_markup=markup)
-    bot.register_next_step_handler(message, on_click_1)
 
 def on_click(message):
     if message.text == 'Да, конечно':
-        bot.send_message(message.chat.id, 'Тогда добро пожаловать')
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
-        time.sleep(5)
-        bot.send_message(message.chat.id, file.readline())
+        bot.send_message(message.chat.id, 'Тогда добро пожаловать', reply_markup=types.ReplyKeyboardRemove())
+        with open("C:/Users/Артём/Desktop/Проект/Sujetforgame.txt", encoding='utf-8') as file:
+            send_messages_with_delay(message.chat.id, file)
         main_2(message)
     elif message.text == 'Не, я не хочу':
-        bot.send_message(message.chat.id, 'Ты потерял счастье, отрок')
+        bot.send_message(message.chat.id, 'Ты потерял счастье, отрок', reply_markup=types.ReplyKeyboardRemove())
 
+def main_2(message):
+    markup = create_keyboard(
+        'Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.',
+        'Сотрудничать с осторожностью: Кай соглашается временно сотрудничать, но сохраняет подозрительность.',
+        'Отказаться: Кай решает покинуть Орден, считая их планы опасными для свободы людей.'
+    )
+    bot.send_message(message.chat.id, '— Выбор:', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_1)
 
 def on_click_1(message):
-    if message.text == 'Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.':
-        bot.send_message(message.chat.id, 'Кай решает поддержать Илену и стать частью нового порядка.')
-    elif message.text == 'Сотрудничать с осторожностью: Кай соглашается временно сотрудничать, но сохраняет подозрительность.':
-        bot.send_message(message.chat.id, 'Кай соглашается временно сотрудничать, но в его сердце поселяются сомнения.')
-    elif message.text == 'Отказаться: Кай решает покинуть Орден, считая их планы опасными для свободы людей.':
-        bot.send_message(message.chat.id, 'Кай решает покинуть Орден, считая их планы опасными для свободы людей.')
+    if message.text.startswith('Присоединиться к Ордену'):
+        bot.send_message(message.chat.id, 'Кай решает поддержать Илену и стать частью нового порядка.',
+                         reply_markup=types.ReplyKeyboardRemove())
+        with open("C:/Users/Артём/Desktop/Проект/Ветка за Орден Света.txt", encoding='utf-8') as file:
+            send_messages_with_delay(message.chat.id, file)
+        main_2_1(message)
+    elif message.text.startswith('Сотрудничать с осторожностью'):
+        bot.send_message(message.chat.id, 'Кай соглашается временно сотрудничать, но в его сердце поселяются сомнения.',
+                         reply_markup=types.ReplyKeyboardRemove())
+        with open("C:/Users/Артём/Desktop/Проект/Сюжетная_линия_Кай_сотрудничает_с_Орденом_Света_с_осторожностью.txt",
+                  encoding='utf-8') as file:
+            send_messages_with_delay(message.chat.id, file)
+        main_2_2(message)
+    elif message.text.startswith('Отказаться'):
+        bot.send_message(message.chat.id, 'Кай решает покинуть Орден, считая их планы опасными для свободы людей.',
+                         reply_markup=types.ReplyKeyboardRemove())
+        with open("C:/Users/Артём/Desktop/Проект/Отказ от сотрудничетва.txt", encoding='utf-8') as file:
+            send_messages_with_delay(message.chat.id, file)
+        main_2_3(message)
+
+def main_2_1(message):
+    markup = create_keyboard('Развилка 1_1', 'Развилка 1_2', 'Развилка 1_3')
+    bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_2)
+
+def on_click_2(message):
+    handle_fork(message, '1', main_2)
+
+def main_2_2(message):
+    markup = create_keyboard('Развилка 2_1', 'Развилка 2_2', 'Развилка 2_3')
+    bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_3)
+
+def on_click_3(message):
+    handle_fork(message, '2', main_2)
+
+def main_2_3(message):
+    markup = create_keyboard('Развилка 3_1', 'Развилка 3_2', 'Развилка 3_3')
+    bot.send_message(message.chat.id, '— Выберите дальнейший путь:', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_4)
+
+def on_click_4(message):
+    handle_fork(message, '3', main_2)
+
+def handle_fork(message, fork_number, next_step_handler):
+    fork_files = {
+        '1': ("C:/Users/Артём/Desktop/Проект/Развилка 1_1.txt", "C:/Users/Артём/Desktop/Проект/Развилка 1_2.txt",
+              "C:/Users/Артём/Desktop/Проект/Развилка 1_3.txt"),
+        '2': ("C:/Users/Артём/Desktop/Проект/развилка 2_1.txt", "C:/Users/Артём/Desktop/Проект/развилка 2_2.txt",
+              "C:/Users/Артём/Desktop/Проект/развилка 2_3.txt"),
+        '3': ("C:/Users/Артём/Desktop/Проект/развилка 3_1.txt", "C:/Users/Артём/Desktop/Проект/развилка 3_2.txt",
+              "C:/Users/Артём/Desktop/Проект/развилка 3_3.txt")
+    }
+    fork_file = fork_files[fork_number][int(message.text[-1]) - 1]
+    bot.send_message(message.chat.id, f'Вы выбрали Развилку {fork_number}_{message.text[-1]}.',
+                     reply_markup=types.ReplyKeyboardRemove())
+    with open(fork_file, encoding='utf-8') as file:
+        send_messages_with_delay(message.chat.id, file)
+
+    if message.text.startswith('Развилка'):
+        bot.send_message(message.chat.id, 'Спасибо за игру! Работа бота завершена.')
+        return
+
+    next_step_handler(message)
 
 bot.infinity_polling()
