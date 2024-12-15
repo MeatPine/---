@@ -1,0 +1,80 @@
+from heapq import merge
+from xml.sax import parse
+
+import telebot
+import time
+from telebot import types
+
+bot = telebot.TeleBot('7602719591:AAER_dkEQXD9x0O4RNnya5nzWss3RAnPqGE')
+file = open("C:/Users/Артём/Desktop/Проект/Sujetforgame.txt", encoding='utf-8')
+
+@bot.message_handler(commands=['start'])
+def main_1(message):
+    markup = types.ReplyKeyboardMarkup()
+    btn1 = types.KeyboardButton('Да, конечно')
+    markup.row(btn1)
+    btn2 = types.KeyboardButton('Не, я не хочу')
+    markup.row(btn2)
+    bot.send_message(message.chat.id, f'Ну что, {message.from_user.first_name} {message.from_user.last_name}, ты готов(a) к приключениям?', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click)
+
+def main_2(message):
+    markup = types.ReplyKeyboardMarkup()
+    btn1 = types.KeyboardButton('Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.')
+    markup.row(btn1)
+    btn2 = types.KeyboardButton('Сотрудничать с осторожностью: Кай соглашается временно сотрудничать, но сохраняет подозрительность.')
+    markup.row(btn2)
+    btn3 = types.KeyboardButton('Отказаться: Кай решает покинуть Орден, считая их планы опасными для свободы людей.')
+    markup.row(btn3)
+    bot.send_message(message.chat.id, f'— Выбор:', reply_markup=markup)
+    bot.register_next_step_handler(message, on_click_1)
+
+def on_click(message):
+    if message.text == 'Да, конечно':
+        bot.send_message(message.chat.id, 'Тогда добро пожаловать')
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        time.sleep(5)
+        bot.send_message(message.chat.id, file.readline())
+        main_2(message)
+    elif message.text == 'Не, я не хочу':
+        bot.send_message(message.chat.id, 'Ты потерял счастье, отрок')
+
+
+def on_click_1(message):
+    if message.text == 'Присоединиться к Ордену: Кай решает поддержать Илену и стать частью нового порядка.':
+        bot.send_message(message.chat.id, 'Кай решает поддержать Илену и стать частью нового порядка.')
+    elif message.text == 'Сотрудничать с осторожностью: Кай соглашается временно сотрудничать, но сохраняет подозрительность.':
+        bot.send_message(message.chat.id, 'Кай соглашается временно сотрудничать, но в его сердце поселяются сомнения.')
+    elif message.text == 'Отказаться: Кай решает покинуть Орден, считая их планы опасными для свободы людей.':
+        bot.send_message(message.chat.id, 'Кай решает покинуть Орден, считая их планы опасными для свободы людей.')
+
+bot.infinity_polling()
